@@ -1,0 +1,5 @@
+name: ConfigSystem
+version: '${project.version}'
+main: dev.splityosis.configsystem.configsystem.ConfigSystem
+api-version: 1.19
+authors: [ SplitYoSis ]
