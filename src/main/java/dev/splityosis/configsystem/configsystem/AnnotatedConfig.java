@@ -179,6 +179,7 @@ public abstract class AnnotatedConfig {
     }
 
     private static List<String> unfixColor(List<String> lst) {
+        if (lst == null) return null;
         List<String> newLst = new ArrayList<>();
         for (String s : lst)
             newLst.add(unfixColor(s));
@@ -186,7 +187,7 @@ public abstract class AnnotatedConfig {
     }
 
     private static String unfixColor(String textToTranslate) {
-        Preconditions.checkArgument(textToTranslate != null, "Cannot translate null text");
+        if (textToTranslate == null) return null;
 
         char[] b = textToTranslate.toCharArray();
         for (int i = 0; i < b.length - 1; i++) {
