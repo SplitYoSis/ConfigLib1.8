@@ -1,22 +1,15 @@
 package dev.splityosis.configsystem.configsystem;
 
-
-import com.google.common.base.Preconditions;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import dev.splityosis.configsystem.configsystem.configtypes.ItemStackConfigType;
+import dev.splityosis.configsystem.configsystem.configtypes.LocationConfigType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 public abstract class AnnotatedConfig {
 
@@ -31,8 +24,18 @@ public abstract class AnnotatedConfig {
         this.name = name;
     }
 
+    private static boolean isSetup = false;
+
     public void initialize(){
+        if (!isSetup){
+            new ItemStackConfigType().register();
+            new LocationConfigType().register();
+            isSetup = true;
+        }
+
         clazz = this.getClass();
+        if (!parentDirectory.exists())
+            parentDirectory.mkdirs();
         file = new File(parentDirectory, name+".yml");
         if (!file.exists()) {
             try {
@@ -90,12 +93,13 @@ public abstract class AnnotatedConfig {
         updateFields();
     }
 
+    @SuppressWarnings("all")
     private void setFieldInConfig(Field field, ConfigField configField){
         try {
-            if (field.getType().equals(ItemStack.class))
-                setItemStack(config, configField.path(), (ItemStack) field.get(this));
-            else if (field.getType().equals(ConfigSectionHandler.class) || ConfigSectionHandler.class.isAssignableFrom(field.getType()))
-                setConfigSectionInConfig(configField.path(), (ConfigSectionHandler<?>) field.get(this));
+            ConfigTypeLogic configTypeLogic = ConfigTypeLogic.getConfigTypeLogic(field.getType(), configField.formatName());
+            if (configTypeLogic != null) {
+                configTypeLogic.setInConfig(field.get(this), config, configField.path());
+            }
             else config.set(configField.path(), field.get(this));
             if (!(configField.comment().length == 1 && configField.comment()[0].isEmpty()))
                 config.setComments(configField.path(), Arrays.asList(configField.comment()));
@@ -106,10 +110,9 @@ public abstract class AnnotatedConfig {
 
     private void updateFieldFromConfig(Field field, ConfigField configField){
         try {
-            if (field.getType().equals(ItemStack.class))
-                field.set(this, getItemStack(config, configField.path()));
-            else if (field.getType().equals(ConfigSectionHandler.class) || ConfigSectionHandler.class.isAssignableFrom(field.getType()))
-                field.set(this, getConfigSectionFromConfig(configField.path(), (ConfigSectionHandler<?>) field.get(this)));
+            ConfigTypeLogic<?> configTypeLogic = ConfigTypeLogic.getConfigTypeLogic(field.getType(), configField.formatName());
+            if (configTypeLogic != null)
+                field.set(this, configTypeLogic.getFromConfig(config, configField.path()));
             else field.set(this, config.get(configField.path()));
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -132,70 +135,5 @@ public abstract class AnnotatedConfig {
         configSection.generalSection = config.getConfigurationSection(path);
         configSection.reloadAll();
         return configSection;
-    }
-
-    public static ItemStack getItemStack(ConfigurationSection config, String path){
-        String name = config.getString(path + ".name");
-        List<String> lore = config.getStringList(path + ".lore");
-        Material material = Material.getMaterial(Objects.requireNonNull(config.getString(path + ".material")));
-        int amount = config.getInt(path + ".amount");
-        return createItemStack(material, 0, fixColor(name), amount, fixColor(lore));
-    }
-
-    public static void setItemStack(ConfigurationSection config, String path, ItemStack item){
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            config.set(path + ".name", unfixColor(meta.getDisplayName()));
-            config.set(path + ".lore", unfixColor(meta.getLore()));
-        }
-        config.set(path + ".material", item.getType().name());
-        config.set(path + ".amount", item.getAmount());
-    }
-
-    private static ItemStack createItemStack(Material material, int data, String name, int amount, List<String> loreList) {
-        ItemStack item = new ItemStack(material, amount, (short) data);
-        ItemMeta meta = item.getItemMeta();
-        if (name != null)
-            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-        for (int i = 0; i < loreList.size(); i++) {
-            String s = ChatColor.translateAlternateColorCodes('&', loreList.get(i));
-            loreList.set(i, s);
-        }
-        meta.setLore(loreList);
-        item.setItemMeta(meta);
-        return item;
-    }
-
-    private static String fixColor(String s){
-        return ChatColor.translateAlternateColorCodes('&', s);
-    }
-
-    private static List<String> fixColor(List<String> lst){
-        if (lst == null) return null;
-        List<String> newLst = new ArrayList<>();
-        for (String s : lst)
-            newLst.add(fixColor(s));
-        return newLst;
-    }
-
-    private static List<String> unfixColor(List<String> lst) {
-        if (lst == null) return null;
-        List<String> newLst = new ArrayList<>();
-        for (String s : lst)
-            newLst.add(unfixColor(s));
-        return newLst;
-    }
-
-    private static String unfixColor(String textToTranslate) {
-        if (textToTranslate == null) return null;
-
-        char[] b = textToTranslate.toCharArray();
-        for (int i = 0; i < b.length - 1; i++) {
-            if (b[i] == '§' && "0123456789AaBbCcDdEeFfKkLlMmNnOoRrXx".indexOf(b[i + 1]) > -1) {
-                b[i] = '&';
-                b[i + 1] = Character.toLowerCase(b[i + 1]);
-            }
-        }
-        return new String(b);
     }
 }

@@ -9,5 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ConfigField{
     String path();
+    String formatName() default "";
     String[] comment() default "";
 }
