@@ -14,7 +14,7 @@ import java.util.Arrays;
 public abstract class AnnotatedConfig {
 
     private final File parentDirectory;
-    private final String name;
+    private String name;
     private File file;
     private FileConfiguration config;
     private Class<? extends AnnotatedConfig> clazz;
@@ -22,6 +22,16 @@ public abstract class AnnotatedConfig {
     public AnnotatedConfig(File parentDirectory, String name) {
         this.parentDirectory = parentDirectory;
         this.name = name;
+    }
+
+    public AnnotatedConfig(File file) throws InvalidConfigFileException {
+        this.parentDirectory = file.getParentFile();
+        this.file = file;
+        this.name = file.getName();
+        if (!this.name.endsWith(".yml")) {
+            throw new InvalidConfigFileException(file);
+        }
+        this.name = this.name.substring(0, this.name.length()-4);
     }
 
     private static boolean isSetup = false;

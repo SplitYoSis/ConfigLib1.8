@@ -23,6 +23,8 @@ public class ItemStackConfigType extends ConfigTypeLogic<ItemStack> {
         Material material = Material.valueOf(config.getString(path + ".material"));
         int amount = config.getInt(path + ".amount");
         String name = colorize(config.getString(path + ".custom-name"));
+        if (name == null && config.isSet(path + ".custom-name"))
+            name = "";
         List<String> lore = colorize(config.getStringList(path + ".custom-lore"));
         Map<Enchantment, Integer> enchants = new HashMap<>();
         ConfigurationSection enchantsSection = config.getConfigurationSection(path + ".enchants");
