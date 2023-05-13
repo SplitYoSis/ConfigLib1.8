@@ -1,4 +1,4 @@
-package dev.splityosis.configsystem.configsystem.configtypes;
+package dev.splityosis.configsystem.configsystem.logics;
 
 import dev.splityosis.configsystem.configsystem.ConfigTypeLogic;
 import org.bukkit.Bukkit;
@@ -8,7 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
 
-public class LocationConfigType extends ConfigTypeLogic<Location> {
+public class LocationConfigLogic extends ConfigTypeLogic<Location> {
 
     @Override
     public Location getFromConfig(ConfigurationSection config, String path) {

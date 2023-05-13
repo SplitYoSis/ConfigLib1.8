@@ -1,4 +1,4 @@
-package dev.splityosis.configsystem.configsystem.configtypes;
+package dev.splityosis.configsystem.configsystem.logics;
 
 import dev.splityosis.configsystem.configsystem.ConfigTypeLogic;
 import org.bukkit.Color;
@@ -16,7 +16,7 @@ import org.bukkit.potion.PotionType;
 
 import java.util.*;
 
-public class ItemStackConfigType extends ConfigTypeLogic<ItemStack> {
+public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
 
     @Override
     public ItemStack getFromConfig(ConfigurationSection config, String path) {

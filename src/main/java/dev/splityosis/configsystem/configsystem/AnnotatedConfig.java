@@ -1,7 +1,7 @@
 package dev.splityosis.configsystem.configsystem;
 
-import dev.splityosis.configsystem.configsystem.configtypes.ItemStackConfigType;
-import dev.splityosis.configsystem.configsystem.configtypes.LocationConfigType;
+import dev.splityosis.configsystem.configsystem.logics.ItemStackConfigLogic;
+import dev.splityosis.configsystem.configsystem.logics.LocationConfigLogic;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -38,8 +38,8 @@ public abstract class AnnotatedConfig {
 
     public void initialize(){
         if (!isSetup){
-            new ItemStackConfigType().register();
-            new LocationConfigType().register();
+            new ItemStackConfigLogic().register();
+            new LocationConfigLogic().register();
             isSetup = true;
         }
 
