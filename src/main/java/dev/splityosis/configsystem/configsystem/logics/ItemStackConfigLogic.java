@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -61,6 +62,18 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
         meta.setLore(lore);
+
+        ConfigurationSection flagSection = config.getConfigurationSection(path + ".item-flags");
+        if (flagSection != null)
+            for (String key : flagSection.getKeys(false)) {
+                try{
+                    ItemFlag itemFlag = ItemFlag.valueOf(key.toUpperCase());
+                    meta.addItemFlags(itemFlag);
+                }catch (Exception e){
+                    //
+                }
+            }
+
         item.setItemMeta(meta);
         item.addUnsafeEnchantments(enchants);
 
