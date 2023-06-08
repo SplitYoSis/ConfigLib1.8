@@ -63,16 +63,15 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
         meta.setDisplayName(name);
         meta.setLore(lore);
 
-        ConfigurationSection flagSection = config.getConfigurationSection(path + ".item-flags");
-        if (flagSection != null)
-            for (String key : flagSection.getKeys(false)) {
-                try{
-                    ItemFlag itemFlag = ItemFlag.valueOf(key.toUpperCase());
-                    meta.addItemFlags(itemFlag);
-                }catch (Exception e){
-                    //
-                }
+        List<String> flags = config.getStringList(path + ".item-flags");
+        for (String flag : flags) {
+            try{
+                ItemFlag itemFlag = ItemFlag.valueOf(flag);
+                meta.addItemFlags(itemFlag);
+            }catch (Exception e){
+                //
             }
+        }
 
         item.setItemMeta(meta);
         item.addUnsafeEnchantments(enchants);
@@ -103,6 +102,10 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
                 String rgb = String.format("%02x%02x%02x", armorMeta.getColor().getRed(), armorMeta.getColor().getGreen(), armorMeta.getColor().getBlue());
                 config.set(path + ".color", rgb);
             }
+            List<String> flags = new ArrayList<>();
+            for (ItemFlag itemFlag : meta.getItemFlags())
+                flags.add(itemFlag.name());
+            config.set(path + ".item-flags", flags);
         }
 
         if (!instance.getEnchantments().isEmpty()) {
