@@ -69,7 +69,8 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
                 ItemFlag itemFlag = ItemFlag.valueOf(flag);
                 meta.addItemFlags(itemFlag);
             }catch (Exception e){
-                //
+                if (flag.equalsIgnoreCase("unbreakable"))
+                    meta.setUnbreakable(true);
             }
         }
 
@@ -105,6 +106,8 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
             List<String> flags = new ArrayList<>();
             for (ItemFlag itemFlag : meta.getItemFlags())
                 flags.add(itemFlag.name());
+            if (meta.isUnbreakable())
+                flags.add("UNBREAKABLE");
             config.set(path + ".item-flags", flags);
         }
 
