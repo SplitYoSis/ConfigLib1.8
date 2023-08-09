@@ -28,9 +28,9 @@ public class ActionsConfigLogic extends ConfigTypeLogic<Actions> {
     public void setInConfig(Actions instance, ConfigurationSection config, String path) {
         List<String> lst = new ArrayList<>();
         for (ActionData actionData : instance.getActionDataList()) {
-            StringBuilder stringBuilder = new StringBuilder(actionData.getActionKey().toUpperCase());
+            StringBuilder stringBuilder = new StringBuilder(actionData.getActionKey().toUpperCase() + " ");
             for (String parameter : actionData.getParameters())
-                stringBuilder.append("'").append(parameter).append("'");
+                stringBuilder.append("`").append(parameter).append("` ");
             lst.add(stringBuilder.toString());
         }
         config.set(path, lst);
