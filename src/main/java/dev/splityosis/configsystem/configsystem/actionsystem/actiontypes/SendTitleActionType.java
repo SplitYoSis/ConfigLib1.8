@@ -28,8 +28,8 @@ public class SendTitleActionType extends ActionType {
         }
 
         try {
-            String title = params.get(0);
-            String subtitle = params.get(1);
+            String title = colorize(params.get(0));
+            String subtitle = colorize(params.get(1));
             int fadeIn = Integer.parseInt(params.get(2));
             int stay = Integer.parseInt(params.get(3));
             int fadeOut = Integer.parseInt(params.get(4));

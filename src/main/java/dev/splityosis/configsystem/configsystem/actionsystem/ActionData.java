@@ -26,17 +26,34 @@ public class ActionData {
         String actionKey = null;
         List<String> parameters = new ArrayList<>();
 
-        Pattern pattern = Pattern.compile("([A-Za-z]+)|'([^']*)'");
+        Pattern pattern = Pattern.compile("([A-Za-z_]+)|`([^`]+)`");
         Matcher matcher = pattern.matcher(input);
 
+        boolean isFirst = true;
         while (matcher.find()) {
-            if (matcher.group(1) != null) {
+            if (isFirst && matcher.group(1) != null) {
                 actionKey = matcher.group(1);
+                isFirst = false;
             } else if (matcher.group(2) != null) {
                 parameters.add(matcher.group(2));
             }
         }
 
+        if (actionKey == null)
+            actionKey = "null";
+
         return new ActionData(actionKey, parameters);
     }
+
+//    public static void main(String[] args) {
+//
+//        String input = "   RUN_COMMAND    `hello``oiskjhdffspid`  `sdopikgjf` aaa";
+//
+//        ActionData data = parseString(input);
+//
+//        System.out.println("key: '"+data.getActionKey()+"'");
+//        System.out.println("parameters: "+data.getParameters());
+//
+//    }
+
 }

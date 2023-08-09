@@ -1,13 +1,14 @@
 package dev.splityosis.configsystem.configsystem.actionsystem.actiontypes;
 
 import dev.splityosis.configsystem.configsystem.actionsystem.ActionType;
+
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Map;
 
 public class RunCommandActionType extends ActionType {
 
