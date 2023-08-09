@@ -1,5 +1,7 @@
 package dev.splityosis.configsystem.configsystem;
 
+import dev.splityosis.configsystem.configsystem.actionsystem.actiontypes.*;
+import dev.splityosis.configsystem.configsystem.logics.ActionsConfigLogic;
 import dev.splityosis.configsystem.configsystem.logics.ItemStackConfigLogic;
 import dev.splityosis.configsystem.configsystem.logics.LocationConfigLogic;
 import org.bukkit.configuration.ConfigurationSection;
@@ -38,8 +40,32 @@ public abstract class AnnotatedConfig {
 
     public void initialize(){
         if (!isSetup){
+            // On first time initialize
+
+            // Logics
             new ItemStackConfigLogic().register();
             new LocationConfigLogic().register();
+            new ActionsConfigLogic().register();
+
+            // ActionTypes
+            new MessageActionType().register();
+            new MessageAllActionType().register();
+
+            new RunCommandActionType().register();
+            new RunConsoleCommandActionType().register();
+
+            new SendTitleAllActionType().register();
+            new SendTitleActionType().register();
+
+            new TeleportActionType().register();
+            new TeleportAllActionType().register();
+
+            new PlaySoundActionType().register();
+            new PlaySoundAllActionType().register();
+
+            new ActionBarActionType().register();
+            new ActionBarAllActionType().register();
+
             isSetup = true;
         }
 
