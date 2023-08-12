@@ -136,6 +136,9 @@ public abstract class AnnotatedConfig {
             if (configTypeLogic != null) {
                 configTypeLogic.setInConfig(field.get(this), config, configField.path());
             }
+            else if(field.getType().equals(ConfigSectionHandler.class)) {
+                setConfigSectionInConfig(configField.path(), (ConfigSectionHandler<?>) field.get(this));
+            }
             else config.set(configField.path(), field.get(this));
             if (!(configField.comment().length == 1 && configField.comment()[0].isEmpty()))
                 config.setComments(configField.path(), Arrays.asList(configField.comment()));
@@ -149,6 +152,11 @@ public abstract class AnnotatedConfig {
             ConfigTypeLogic<?> configTypeLogic = ConfigTypeLogic.getConfigTypeLogic(field.getType(), configField.formatName());
             if (configTypeLogic != null)
                 field.set(this, configTypeLogic.getFromConfig(config, configField.path()));
+
+            else if(field.getType().equals(ConfigSectionHandler.class)) {
+                field.set(this, getConfigSectionFromConfig(configField.path(), (ConfigSectionHandler<?>) field.get(this)));
+            }
+
             else field.set(this, config.get(configField.path()));
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -169,6 +177,7 @@ public abstract class AnnotatedConfig {
 
     private ConfigSectionHandler<?> getConfigSectionFromConfig(String path, ConfigSectionHandler<?> configSection){
         configSection.generalSection = config.getConfigurationSection(path);
+        if(configSection.generalSection == null) return configSection;
         configSection.reloadAll();
         return configSection;
     }
