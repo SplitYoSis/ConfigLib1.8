@@ -34,7 +34,7 @@ public class SendTitleActionType extends ActionType {
             int stay = Integer.parseInt(params.get(3));
             int fadeOut = Integer.parseInt(params.get(4));
 
-            player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+            player.sendTitle(title, subtitle);
 
         } catch (NumberFormatException e) {
             new InvalidActionParameterException("Invalid parameters for send title action").printStackTrace();

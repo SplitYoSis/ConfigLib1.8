@@ -3,7 +3,10 @@ package dev.splityosis.configsystem.configsystem.actionsystem.actiontypes;
 import dev.splityosis.configsystem.configsystem.actionsystem.ActionType;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +28,13 @@ public class ActionBarAllActionType extends ActionType {
         if (params.size() == 0) return;
         String msg = colorize(params.get(0));
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            onlinePlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
+            sendActionBar(onlinePlayer, msg);
         }
+    }
+
+    private void sendActionBar(Player p, String msg) {
+        IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + colorize(msg) + "\"}");
+        PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
+        ((CraftPlayer) p).getHandle().playerConnection.sendPacket(ppoc);
     }
 }

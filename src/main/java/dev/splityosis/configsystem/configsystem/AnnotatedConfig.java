@@ -90,10 +90,10 @@ public abstract class AnnotatedConfig {
     }
 
     public void saveToFile(){
-        if (clazz.isAnnotationPresent(ConfigHeader.class)){
-            ConfigHeader configHeader = clazz.getAnnotation(ConfigHeader.class);
-            config.options().setHeader(Arrays.asList(configHeader.header()));
-        }
+//        if (clazz.isAnnotationPresent(ConfigHeader.class)){
+//            ConfigHeader configHeader = clazz.getAnnotation(ConfigHeader.class);
+//            config.options().setHeader(Arrays.asList(configHeader.header()));
+//        }
 
         for (Field field : clazz.getDeclaredFields()){
             if (!field.isAnnotationPresent(ConfigField.class)) continue;

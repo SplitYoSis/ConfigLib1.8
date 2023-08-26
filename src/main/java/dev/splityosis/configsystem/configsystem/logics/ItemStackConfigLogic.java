@@ -3,17 +3,13 @@ package dev.splityosis.configsystem.configsystem.logics;
 import dev.splityosis.configsystem.configsystem.ConfigTypeLogic;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionType;
 
 import java.util.*;
 
@@ -23,6 +19,7 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
     public ItemStack getFromConfig(ConfigurationSection config, String path) {
         Material material = Material.valueOf(config.getString(path + ".material"));
         int amount = config.getInt(path + ".amount");
+        short data = (short) config.getInt(path + ".data");
         String name = colorize(config.getString(path + ".custom-name"));
         if (name == null && config.isSet(path + ".custom-name"))
             name = "";
@@ -31,7 +28,7 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
         ConfigurationSection enchantsSection = config.getConfigurationSection(path + ".enchants");
         if (enchantsSection != null) {
             for (String key : enchantsSection.getKeys(false)) {
-                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.fromString(key.toLowerCase()));
+                Enchantment enchantment = Enchantment.getByName(key.toLowerCase());
                 if (enchantment != null){
                     enchants.put(enchantment, enchantsSection.getInt(key));
                 }
@@ -39,15 +36,10 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
         }
 
         ItemStack item;
-        if(material == Material.PLAYER_HEAD) {
+        if(material == Material.SKULL_ITEM) {
             item = new ItemStack(material, amount);
             SkullMeta meta = (SkullMeta) item.getItemMeta();
             meta.setOwner(config.getString(path + ".owner"));
-            item.setItemMeta(meta);
-        } else if(material.name().contains("POTION")) {
-            item = new ItemStack(material, amount);
-            PotionMeta meta = (PotionMeta) item.getItemMeta();
-            meta.setBasePotionData(new PotionData(PotionType.valueOf(config.getString(path + ".potion-type"))));
             item.setItemMeta(meta);
         } else if(material.name().startsWith("LEATHER_")) {
             item = new ItemStack(material, amount);
@@ -58,6 +50,8 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
         } else {
             item = new ItemStack(material, amount);
         }
+
+        item.setDurability(data);
 
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
@@ -84,6 +78,7 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
     public void setInConfig(ItemStack instance, ConfigurationSection config, String path) {
         config.set(path + ".material", instance.getType().toString());
         config.set(path + ".amount", instance.getAmount());
+        config.set(path + ".data", instance.getDurability());
 
         ItemMeta meta = instance.getItemMeta();
         if(meta != null) {
@@ -93,11 +88,8 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
             if (meta instanceof SkullMeta) {
                 SkullMeta skullMeta = (SkullMeta) meta;
                 if (skullMeta.hasOwner()) {
-                    config.set(path + ".owner", skullMeta.getOwningPlayer() == null ? null : skullMeta.getOwningPlayer().getName());
+                    config.set(path + ".owner", skullMeta.getOwner() == null ? null : skullMeta.getOwner());
                 }
-            } else if (meta instanceof PotionMeta) {
-                PotionMeta potionMeta = (PotionMeta) meta;
-                config.set(path + ".potion-type", potionMeta.getBasePotionData().getType().toString());
             } else if (meta instanceof LeatherArmorMeta) {
                 LeatherArmorMeta armorMeta = (LeatherArmorMeta) meta;
                 String rgb = String.format("%02x%02x%02x", armorMeta.getColor().getRed(), armorMeta.getColor().getGreen(), armorMeta.getColor().getBlue());
@@ -113,7 +105,7 @@ public class ItemStackConfigLogic extends ConfigTypeLogic<ItemStack> {
 
         if (!instance.getEnchantments().isEmpty()) {
             ConfigurationSection enchantsSection = config.createSection(path + ".enchants");
-            instance.getEnchantments().forEach((enchantment, integer) -> enchantsSection.set(enchantment.getKey().getKey(), integer));
+            instance.getEnchantments().forEach((enchantment, integer) -> enchantsSection.set(enchantment.getName(), integer));
         }
     }
 }

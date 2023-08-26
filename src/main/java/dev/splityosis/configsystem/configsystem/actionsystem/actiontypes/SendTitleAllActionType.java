@@ -35,7 +35,7 @@ public class SendTitleAllActionType extends ActionType {
             int fadeOut = Integer.parseInt(params.get(4));
 
             for (Player onlinePlayer : Bukkit.getOnlinePlayers())
-                onlinePlayer.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+                onlinePlayer.sendTitle(title, subtitle);
 
         } catch (NumberFormatException e) {
             new InvalidActionParameterException("Invalid parameters for send title action").printStackTrace();
