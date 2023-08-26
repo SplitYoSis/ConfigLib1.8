@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 public @interface ConfigField{
     String path();
     String formatName() default "";
-    String[] comment() default "";
+//    String[] comment() default "";
 }

@@ -140,8 +140,8 @@ public abstract class AnnotatedConfig {
                 setConfigSectionInConfig(configField.path(), (ConfigSectionHandler<?>) field.get(this));
             }
             else config.set(configField.path(), field.get(this));
-            if (!(configField.comment().length == 1 && configField.comment()[0].isEmpty()))
-                config.setComments(configField.path(), Arrays.asList(configField.comment()));
+//            if (!(configField.comment().length == 1 && configField.comment()[0].isEmpty()))
+//                config.setComments(configField.path(), Arrays.asList(configField.comment()));
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
