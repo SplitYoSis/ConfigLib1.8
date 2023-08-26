@@ -35,8 +35,8 @@ hs_err_pid*
 .fuse_hidden*
 
 # KDE directory preferences
-.directory
-!libs/
+#.directory
+#!libs/
 
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
