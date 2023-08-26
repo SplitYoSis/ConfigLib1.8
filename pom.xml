@@ -71,8 +71,9 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar</systemPath>
             <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>
